@@ -3,15 +3,16 @@ from datetime import datetime, timedelta
 
 from sqlalchemy.orm import Session
 from storage.models import Contact
-from .schemas import ContactCreate
-from storage.models import get_db
+from schemas import ContactCreate
+from storage.models import get_db, User
+from auth_service import get_current_user
 from fastapi import APIRouter, Depends
 
 router = APIRouter(prefix='/contacts', tags=["contacts"])
 
 
 @router.get("/birthday", response_model=List[ContactCreate])
-def get_birthdays(days: int = 7, db: Session = Depends(get_db)):
+def get_birthdays(days: int = 7, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     today = datetime.today().date()
     period = []
     for num in range(days):
